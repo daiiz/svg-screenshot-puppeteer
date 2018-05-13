@@ -1,3 +1,4 @@
+.env
 out/*
 !out/.keep
 keys/private-key.json
