@@ -5,10 +5,11 @@ import AnchorsInArea from 'anchors-in-area'
 import {createSVGTag} from './src/svg-screenshot'
 import {uploadToSvgScreenshot} from './src/svg-screenshot-api'
 import {uploadToGoogleCloudStorage} from './src/gcs'
+import {oauth, checkToken} from './src/oauth'
 
 const LAUNCH_OPTION = { headless: true }
 
-const run = async () => {
+const capture = async () => {
   const {window, url, range} = getArgs()
   const deviceScaleFactor = 2
 
@@ -70,6 +71,15 @@ const saveToSvgScreenshot = ({ svg, url, image, title, range, dpr}) => {
     svg, url, title, viewbox, dpr,
     image: `data:iamge/png;base64,${image}`
   })
+}
+
+const run = async () => {
+  const tokenValid = await checkToken()
+  if (!tokenValid) {
+    oauth(capture)
+    return
+  }
+  capture()
 }
 
 run()
