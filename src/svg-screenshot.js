@@ -5,7 +5,8 @@ export function createSVGTag ({ width, height, url, title, image, anchors }) {
     const aTag = `
     <a
       xmlns:xlink="http://www.w3.org/1999/xlink"
-      xlink:href="${anchor.url}">
+      xlink:href="${anchor.url}"
+      target="_blank">
       <rect width="${pos.width}" height="${pos.height}" x="${pos.left}" y="${pos.top}" fill="rgba(0,0,0,0)"></rect>
       <text x="${pos.left}" y="${pos.top + 16}" fill="rgba(0,0,0,0)">
         ${anchor.text}
