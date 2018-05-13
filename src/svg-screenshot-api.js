@@ -1,7 +1,7 @@
 import fs from 'fs'
 import axios from 'axios'
 
-const accessTokenFilename = ".keys/svg-screenshot-token.json"
+const accessTokenFilename = "./keys/svg-screenshot-token.json"
 const appUrl = 'http://localhost:8080'
 
 const existFile = filePath => {
