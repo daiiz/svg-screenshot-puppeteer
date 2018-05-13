@@ -2,7 +2,8 @@ import fs from 'fs'
 import axios from 'axios'
 
 const accessTokenFilename = "./keys/svg-screenshot-token.json"
-const appUrl = 'http://localhost:8080'
+const appUrl = 'https://svgscreenshot.appspot.com'
+// const appUrl = 'http://localhost:8080'
 
 const existFile = filePath => {
   try {
