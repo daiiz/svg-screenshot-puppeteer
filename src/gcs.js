@@ -1,8 +1,7 @@
 import fs from 'fs'
-// import opn from 'opn'
 import openurl from 'openurl'
 
-const keyFilename = "./private-key.json"
+const keyFilename = "./keys/private-key.json"
 const projectId = "gyakky2"
 const bucketName = `${projectId}.appspot.com`
 let gcs = null

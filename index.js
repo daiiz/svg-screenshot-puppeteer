@@ -3,12 +3,15 @@ import fs from 'fs'
 import {getArgs} from './src/setup'
 import AnchorsInArea from 'anchors-in-area'
 import {createSVGTag} from './src/svg-screenshot'
+import {uploadToSvgScreenshot} from './src/svg-screenshot-api'
 import {uploadToGoogleCloudStorage} from './src/gcs'
+import {oauth, checkToken} from './src/oauth'
 
 const LAUNCH_OPTION = { headless: true }
 
-const run = async () => {
+const capture = async () => {
   const {window, url, range} = getArgs()
+  const deviceScaleFactor = 2
 
   const browser = await puppeteer.launch(LAUNCH_OPTION)
   const page = await browser.newPage()
@@ -20,7 +23,7 @@ const run = async () => {
   await page.setViewport({
     width: window.width,
     height: window.height,
-    deviceScaleFactor: 2
+    deviceScaleFactor
   })
   const anchors = await page.evaluate(AnchorsInArea.getAnchors, JSON.stringify(range))
 
@@ -33,21 +36,50 @@ const run = async () => {
   })
   browser.close()
 
+  const image = fs.readFileSync(tmpPngPath, 'base64')
   const svg = createSVGTag({
     width: range.width,
     height: range.height,
-    image: fs.readFileSync(tmpPngPath, 'base64'),
+    image,
     url,
     title: decodeURIComponent(title),
     anchors
   })
   fs.unlinkSync(tmpPngPath)
 
+  // saveLocal({ svg, fileName })
+  // saveToGCS({ svg, fileName })
+  saveToSvgScreenshot({
+    svg, url, image, title, range, dpr: deviceScaleFactor
+  })
+}
+
+const saveLocal = ({svg, fileName}) => {
   fs.writeFileSync(`./out/${fileName}.svg`, svg)
+}
+
+const saveToGCS = ({svg, fileName}) => {
   uploadToGoogleCloudStorage({
     fileName,
     text: svg
   })
+}
+
+const saveToSvgScreenshot = ({ svg, url, image, title, range, dpr}) => {
+  const viewbox = `0 0 ${range.width} ${range.height}`
+  uploadToSvgScreenshot({
+    svg, url, title, viewbox, dpr,
+    image: `data:iamge/png;base64,${image}`
+  })
+}
+
+const run = async () => {
+  const tokenValid = await checkToken()
+  if (!tokenValid) {
+    oauth(capture)
+    return
+  }
+  capture()
 }
 
 run()
