@@ -65,13 +65,15 @@ const saveToGCS = ({svg, fileName}) => {
   })
 }
 
-const saveToSvgScreenshot = ({ svg, url, image, title, range, dpr}) => {
+const saveToSvgScreenshot = ({svg, url, image, title, range, dpr}) => {
   const viewbox = `0 0 ${range.width} ${range.height}`
   uploadToSvgScreenshot({
     svg, url, title, viewbox, dpr,
     image: `data:iamge/png;base64,${image}`
   })
 }
+
+const saveToGyazo = () => {}
 
 const run = async () => {
   const tokenValid = await checkToken()
