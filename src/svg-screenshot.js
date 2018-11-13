@@ -14,10 +14,11 @@ export function createSVGTag ({ width, height, url, title, image, anchors }) {
     </a>`
     aTags.push(aTag)
   }
+
   const sourece = createSourceTag(url, title, height)
   const svg = `
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}"
-    width="${width}" height="${height}">
+    class="svg-screenshot" width="${width}" height="${height}">
     <style>
       a { cursor: pointer; }
     </style>
