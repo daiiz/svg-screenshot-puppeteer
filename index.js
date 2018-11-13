@@ -9,8 +9,8 @@ import {oauth, checkToken} from './src/oauth'
 
 const LAUNCH_OPTION = { headless: true }
 
-const capture = async () => {
-  const {window, url, range} = getArgs()
+const capture = async ({win, url, range}) => {
+  // const {window, url, range} = getArgs()
   const deviceScaleFactor = 2
 
   const browser = await puppeteer.launch(LAUNCH_OPTION)
@@ -21,8 +21,8 @@ const capture = async () => {
   })
   await page.waitFor(500)
   await page.setViewport({
-    width: window.width,
-    height: window.height,
+    width: win.width,
+    height: win.height,
     deviceScaleFactor
   })
   const anchors = await page.evaluate(AnchorsInArea.getAnchors, JSON.stringify(range))
@@ -84,4 +84,15 @@ const run = async () => {
   capture()
 }
 
-run()
+export const core = async ({url, win, range}) => {
+  const tokenValid = await checkToken()
+  const callback = () => {
+    capture({url, win, range})
+  }
+  if (!tokenValid) {
+    return oauth(callback)
+  }
+  callback()
+}
+
+// run()
