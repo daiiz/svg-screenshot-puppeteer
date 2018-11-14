@@ -5,6 +5,7 @@ import path from 'path'
 import fs from 'fs'
 import {core} from './'
 import {parseOptions} from './src/setup'
+const chalk = require('chalk')
 
 const PORT = 9010
 const {PWD} = process.env
@@ -16,13 +17,13 @@ app.get('/range/:range/viewport/:viewport', (req, res) => {
   if (!req.query.url) {
     return res.end()
   }
-  const url = decodeURIComponent(req.query.url)
+  const url = req.query.url
 
   range = range.replace(/-/g, ',')
   viewport = viewport.replace(/-/g, ',')
   const options = parseOptions({url, range, viewport})
 
-  console.log('enqueue', url)
+  console.log(chalk.cyan(`enqueue: ${url}`))
   core(options)
 
   // res.end(JSON.stringify(options))

@@ -27,6 +27,7 @@
     "serve-static": "^1.13.2"
   },
   "devDependencies": {
+    "chalk": "^2.4.1",
     "node-dev": "^3.1.3"
   }
 }
