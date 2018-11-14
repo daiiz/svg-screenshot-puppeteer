@@ -83,5 +83,3 @@ export const core = async ({url, win, range}) => {
   }
   callback()
 }
-
-// run()

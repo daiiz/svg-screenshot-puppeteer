@@ -5,7 +5,13 @@
 
 ## Run
 ```
-$ babel-node index.js -u https://scrapbox.io/daiiz/The_Great_Burgerに行ってきた -r 0,0,687,687 -v 1054,667
+$ npm run start
+```
+Local server starts at http://localhost:9010
+
+## Take a screenshot
+```
+GET /range/0-0-687-687/viewport/1054-667?url=https://scrapbox.io/daiiz/The_Great_Burger%E3%81%AB%E8%A1%8C%E3%81%A3%E3%81%A6%E3%81%8D%E3%81%9F
 ```
 
 ## Result
