@@ -23,7 +23,7 @@ const initGCS = () => {
   })
 }
 
-export async function uploadToGoogleCloudStorage ({ fileName, text }) {
+export async function uploadToGoogleCloudStorage ({fileName, text}) {
   const dirName = 'puppeteer_svg_screenshot'
   const localFilePath = `./out/${fileName}.svg`
   initGCS()
