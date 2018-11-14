@@ -50,7 +50,7 @@ const func = () => {
       img.onload = function () {
       }
       img.onerror = function () {
-        alert(1)
+        window.open(endpoint)
       }
       img.src = endpoint
     }
