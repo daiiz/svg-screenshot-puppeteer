@@ -1,6 +1,5 @@
 import puppeteer from 'puppeteer'
 import fs from 'fs'
-import {getArgs} from './src/setup'
 import AnchorsInArea from 'anchors-in-area'
 import {createSVGTag} from './src/svg-screenshot'
 import {uploadToSvgScreenshot} from './src/svg-screenshot-api'
@@ -10,7 +9,6 @@ import {oauth, checkToken} from './src/oauth'
 const LAUNCH_OPTION = { headless: true }
 
 const capture = async ({win, url, range}) => {
-  // const {window, url, range} = getArgs()
   const deviceScaleFactor = 2
 
   const browser = await puppeteer.launch(LAUNCH_OPTION)
@@ -74,15 +72,6 @@ const saveToSvgScreenshot = ({svg, url, image, title, range, dpr}) => {
 }
 
 const saveToGyazo = () => {}
-
-const run = async () => {
-  const tokenValid = await checkToken()
-  if (!tokenValid) {
-    oauth(capture)
-    return
-  }
-  capture()
-}
 
 export const core = async ({url, win, range}) => {
   const tokenValid = await checkToken()

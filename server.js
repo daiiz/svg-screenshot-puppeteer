@@ -26,12 +26,7 @@ app.get('/range/:range/viewport/:viewport', (req, res) => {
   console.log(chalk.cyan(`enqueue: ${url}`))
   core(options)
 
-  // res.end(JSON.stringify(options))
-  // res.redirect('/0.png')
   const buf = fs.readFileSync('./static/0.png')
-  // res.redirect = '/0.png'
-  // res.send(buf, {'Content-Type': 'image/png'}, 200)
-  // res.end()
   send(res, 200, buf, {'Content-Type': 'image/png'})
 })
 
