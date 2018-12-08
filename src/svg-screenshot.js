@@ -1,73 +1,53 @@
-function createSVGTag ({ width, height, url, title, image, anchors }) {
-  const aTags = []
-  for (const anchor of anchors) {
-    const pos = anchor.position
-    const aTag = `
-    <a
-      xmlns:xlink="http://www.w3.org/1999/xlink"
-      xlink:href="${anchor.url}"
-      target="_blank">
-      <rect width="${pos.width}" height="${pos.height}" x="${pos.left}" y="${pos.top}" fill="rgba(0,0,0,0)"></rect>
-      <text x="${pos.left}" y="${pos.top + 16}" fill="rgba(0,0,0,0)">
-        ${anchor.text}
-      </text>
-    </a>`
-    aTags.push(aTag)
-  }
+const {createSvg} = require('svgize')
 
-  const sourece = createSourceTag(url, title, height)
-  const svg = `
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}"
-    class="svg-screenshot" width="${width}" height="${height}">
-    <style>
-      a { cursor: pointer; }
-    </style>
-    <image
-      xmlns:xlink="http://www.w3.org/1999/xlink"
-      width="${width}" height="${height}" x="0" y="0"
-      xlink:href="data:image/png;base64,${image}"></image>
-    ${aTags.join('\n')}
-    ${sourece.style}
-    ${sourece.a}
-  </svg>`
-  return svg
-}
-
-const createSourceTag = (uri, title, height) => {
-  const svgns = 'http://www.w3.org/2000/svg'
-  const hrefns = 'http://www.w3.org/1999/xlink'
-
-  // style
-  const style = `
+const sourceStyle = `
   <style>
-    text.source {
+    .source text {
       fill: #888888;
       font-size: 11px;
       font-weight: 400;
       text-decoration: none;
       font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     }
-    text.source:hover {
+    .source text:hover {
       text-decoration: underline;
       fill: #2962FF;
     }
-  </style>`
+  </style>
+`
 
-  const a = `
-  <a
-    xmlns:xlink="http://www.w3.org/1999/xlink"
-    xlink:href="${uri}"
-    target="_blank"
-    class="source">
-    <text
-      x="4"
-      y="${height - 4}"
-      class="source">
-      ${title}
-    </text>
-  </a>`
+function createSVGTag ({width, height, url, title, image, anchors}) {
+  const externals = []
+  // Puppeteerによって抽出されたページ内リンク
+  for (const anchor of anchors) {
+    const {position, text} = anchor
+    if (!anchor.url.startsWith('http')) continue
+    const external = {
+      url: anchor.url,
+      x: position.left,
+      y: position.top,
+      width: position.width,
+      height: position.height,
+      text
+    }
+    externals.push(external)
+  }
+  // 出典
+  externals.push({
+    url,
+    text: title,
+    className: 'source',
+    x: 4,
+    y: height - 4
+  })
 
-  return { style, a }
+  return createSvg(`data:image/png;base64,${image}`, {
+    width, height,
+    className: 'svg-screenshot',
+    dataset: {url, title},
+    externals,
+    style: sourceStyle,
+  })
 }
 
 module.exports = {createSVGTag}
