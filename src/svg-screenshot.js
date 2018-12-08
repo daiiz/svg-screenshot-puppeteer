@@ -1,20 +1,18 @@
 const {createSvg} = require('svgize')
 
-const sourceStyle = `
-  <style>
-    .source text {
-      fill: #888888;
-      font-size: 11px;
-      font-weight: 400;
-      text-decoration: none;
-      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    }
-    .source text:hover {
-      text-decoration: underline;
-      fill: #2962FF;
-    }
-  </style>
-`
+const sourceStyle = [
+  `.source text {
+    fill: #888888;
+    font-size: 11px;
+    font-weight: 400;
+    text-decoration: none;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  }`,
+  `.source text:hover {
+    text-decoration: underline;
+    fill: #2962FF;
+  }`
+]
 
 function createSVGTag ({width, height, url, title, image, anchors}) {
   const externals = []
