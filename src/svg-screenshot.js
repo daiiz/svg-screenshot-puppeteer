@@ -1,4 +1,4 @@
-export function createSVGTag ({ width, height, url, title, image, anchors }) {
+function createSVGTag ({ width, height, url, title, image, anchors }) {
   const aTags = []
   for (const anchor of anchors) {
     const pos = anchor.position
@@ -69,3 +69,5 @@ const createSourceTag = (uri, title, height) => {
 
   return { style, a }
 }
+
+module.exports = {createSVGTag}

@@ -17,7 +17,7 @@ const authUrl = oauth2Client.generateAuthUrl({
 })
 const tokenFilePath = `./keys/svg-screenshot-token.json`
 
-export function oauth (callback) {
+function oauth (callback) {
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
@@ -42,7 +42,7 @@ export function oauth (callback) {
   })
 }
 
-export async function checkToken () {
+async function checkToken () {
   try {
     fs.statSync(tokenFilePath)
   } catch (err) {
@@ -74,3 +74,4 @@ const updateAccessToken = async (token) => {
   return newTokens.credentials
 }
 
+module.exports = {oauth, checkToken}
