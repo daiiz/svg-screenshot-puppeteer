@@ -1,5 +1,9 @@
 const {createSvg} = require('svgize')
 
+const fmt = (text='') => {
+  return text.replace(/</g, '').replace(/>/g, '')
+}
+
 const sourceStyle = [
   `.source text {
     fill: #888888;
@@ -21,19 +25,19 @@ function createSVGTag ({width, height, url, title, image, anchors}) {
     const {position, text} = anchor
     if (!anchor.url.startsWith('http')) continue
     const external = {
-      url: anchor.url,
+      url: fmt(anchor.url),
       x: position.left,
       y: position.top,
       width: position.width,
       height: position.height,
-      text
+      text: fmt(text)
     }
     externals.push(external)
   }
   // 出典
   externals.push({
-    url,
-    text: title,
+    url: fmt(url),
+    text: fmt(title),
     className: 'source',
     x: 4,
     y: height - 4
@@ -42,7 +46,10 @@ function createSVGTag ({width, height, url, title, image, anchors}) {
   return createSvg(`data:image/png;base64,${image}`, {
     width, height,
     className: 'svg-screenshot',
-    dataset: {url, title},
+    dataset: {
+      url: fmt(url),
+      title: fmt(title)
+    },
     externals,
     style: sourceStyle,
   })
