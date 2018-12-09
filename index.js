@@ -10,7 +10,8 @@ const {UPLOADER, executablePath, userDataDir} = process.env
 const LAUNCH_OPTION = {
   headless: true,
   executablePath,
-  userDataDir
+  userDataDir,
+  args: ['--no-sandbox', '--disable-setuid-sandbox']
 }
 
 const capture = async ({win, url, range}) => {
@@ -67,6 +68,7 @@ const capture = async ({win, url, range}) => {
 
 const saveLocal = ({svg, fileName}) => {
   fs.writeFileSync(`./out/${fileName}.svg`, svg)
+  console.log('saved')
 }
 
 const saveToGCS = ({svg, fileName}) => {
