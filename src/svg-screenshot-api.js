@@ -1,5 +1,7 @@
-import fs from 'fs'
-import axios from 'axios'
+// import fs from 'fs'
+const fs = require('fs')
+// import axios from 'axios'
+const axios = require('axios')
 
 const accessTokenFilename = "./keys/svg-screenshot-token.json"
 const appUrl = 'https://svgscreenshot.appspot.com'
@@ -18,7 +20,7 @@ const apiClient = axios.create({
   timeout: 60000
 })
 
-export async function uploadToSvgScreenshot ({ svg, url, image, title, viewbox, dpr }) {
+async function uploadToSvgScreenshot ({ svg, url, image, title, viewbox, dpr }) {
   if (!existFile(accessTokenFilename)) return
   const { access_token } = JSON.parse(fs.readFileSync(accessTokenFilename))
   const uploadApiEndpoint = `${appUrl}/_ah/api/items/v1/upload?access_token=${access_token}`
@@ -39,3 +41,5 @@ export async function uploadToSvgScreenshot ({ svg, url, image, title, viewbox, 
     console.error(err.message)
   }
 }
+
+module.exports = {uploadToSvgScreenshot}

@@ -1,4 +1,4 @@
-export const parseOptions = options => {
+const parseOptions = options => {
   const range = (options.range || '0,0,300,300').split(',').map(px => parseInt(px.trim()))
   const win = (options.viewport || '600,400').split(',').map(px => parseInt(px.trim()))
   const res = {
@@ -24,3 +24,5 @@ export const parseOptions = options => {
   }
   return res
 }
+
+module.exports = parseOptions

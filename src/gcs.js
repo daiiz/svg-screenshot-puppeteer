@@ -1,5 +1,5 @@
-import fs from 'fs'
-import openurl from 'openurl'
+const fs = require('fs')
+const openurl = require('openurl')
 
 const keyFilename = "./keys/private-key.json"
 const projectId = "gyakky2"

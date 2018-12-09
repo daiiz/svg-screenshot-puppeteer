@@ -1,12 +1,18 @@
-import puppeteer from 'puppeteer'
-import fs from 'fs'
-import AnchorsInArea from 'anchors-in-area'
-import {createSVGTag} from './src/svg-screenshot'
-import {uploadToSvgScreenshot} from './src/svg-screenshot-api'
-import {uploadToGoogleCloudStorage} from './src/gcs'
-import {oauth, checkToken} from './src/oauth'
+require('dotenv').config()
+const puppeteer = require('puppeteer-core')
+const fs = require('fs')
+const AnchorsInArea = require('anchors-in-area')
+const {createSVGTag} = require('./src/svg-screenshot')
+const {uploadToSvgScreenshot} = require('./src/svg-screenshot-api')
+const {oauth, checkToken} = require('./src/oauth')
 
-const LAUNCH_OPTION = { headless: true }
+const {UPLOADER, executablePath, userDataDir} = process.env
+const LAUNCH_OPTION = {
+  headless: true,
+  executablePath,
+  userDataDir,
+  args: ['--no-sandbox', '--disable-setuid-sandbox']
+}
 
 const capture = async ({win, url, range}) => {
   const deviceScaleFactor = 2
@@ -24,7 +30,6 @@ const capture = async ({win, url, range}) => {
     deviceScaleFactor
   })
   const anchors = await page.evaluate(AnchorsInArea.getAnchors, JSON.stringify(range))
-
   const fileName = `${Date.now()}`
   const tmpPngPath = `./out/${fileName}.png`
   const title = await page.title()
@@ -45,15 +50,25 @@ const capture = async ({win, url, range}) => {
   })
   fs.unlinkSync(tmpPngPath)
 
-  // saveLocal({ svg, fileName })
-  // saveToGCS({ svg, fileName })
-  saveToSvgScreenshot({
-    svg, url, image, title, range, dpr: deviceScaleFactor
-  })
+  switch (UPLOADER) {
+    case 'local': {
+      saveLocal({svg, fileName})
+      break
+    }
+    case 'gcs': {
+      saveToGCS({svg, fileName})
+      break
+    }
+    case 'svgss': {
+      saveToSvgScreenshot({svg, url, image, title, range, dpr: deviceScaleFactor})
+      break
+    }
+  }
 }
 
 const saveLocal = ({svg, fileName}) => {
   fs.writeFileSync(`./out/${fileName}.svg`, svg)
+  console.log('saved')
 }
 
 const saveToGCS = ({svg, fileName}) => {
@@ -73,13 +88,19 @@ const saveToSvgScreenshot = ({svg, url, image, title, range, dpr}) => {
 
 const saveToGyazo = () => {}
 
-export const core = async ({url, win, range}) => {
-  const tokenValid = await checkToken()
+const core = async ({url, win, range}) => {
   const callback = () => {
     capture({url, win, range})
   }
-  if (!tokenValid) {
-    return oauth(callback)
+  if (UPLOADER === 'local') {
+    return callback()
   }
-  callback()
+  // const tokenValid = await checkToken()
+  if (!await checkToken()) {
+    return oauth(callback)
+  } else {
+    callback()
+  }
 }
+
+module.exports = core
