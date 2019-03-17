@@ -7,7 +7,7 @@ import {core} from './'
 import {parseOptions} from './src/setup'
 const chalk = require('chalk')
 
-const PORT = 9010
+const PORT = process.env.PORT || 9010
 const {PWD} = process.env
 
 const app = polka()
