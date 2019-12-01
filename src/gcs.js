@@ -40,7 +40,7 @@ export async function uploadToGoogleCloudStorage ({fileName, text}) {
     }
   }, async (err, file) => {
     if (err) {
-      console.log(err)
+      console.error(err)
       return
     }
     await file.makePublic()
