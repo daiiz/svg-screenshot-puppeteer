@@ -7,12 +7,12 @@ import {core} from './'
 import {parseOptions} from './src/setup'
 const chalk = require('chalk')
 
-const PORT = 9010
+const PORT = process.env.PORT || 9010
 const {PWD} = process.env
 
 const app = polka()
 
-app.get('/range/:range/viewport/:viewport', (req, res) => {
+app.get('/range/:range/viewport/:viewport', async (req, res) => {
   let {range, viewport} = req.params
   if (!req.query.url) {
     return res.end()
@@ -24,10 +24,13 @@ app.get('/range/:range/viewport/:viewport', (req, res) => {
   const options = parseOptions({url, range, viewport})
 
   console.log(chalk.cyan(`enqueue: ${url}`))
-  core(options)
+  const imageName = await core(options)
 
-  const buf = fs.readFileSync('./static/0.png')
-  send(res, 200, buf, {'Content-Type': 'image/png'})
+  const imagePath = imageName ? `./out/${imageName}.svg` : './static/0.png'
+  const contentType = imageName ? 'image/svg+xml' : 'image/png'
+  const buf = await fs.promises.readFile(imagePath)
+  console.log(imageName)
+  send(res, 200, buf, { 'Content-Type': contentType })
 })
 
 app.use(serveStatic(path.resolve(PWD, 'static')))
