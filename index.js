@@ -45,15 +45,16 @@ const capture = async ({win, url, range}) => {
   })
   fs.unlinkSync(tmpPngPath)
 
-  // saveLocal({ svg, fileName })
+  await saveLocal({ svg, fileName })
   // saveToGCS({ svg, fileName })
   saveToSvgScreenshot({
     svg, url, image, title, range, dpr: deviceScaleFactor
   })
+  return fileName
 }
 
-const saveLocal = ({svg, fileName}) => {
-  fs.writeFileSync(`./out/${fileName}.svg`, svg)
+const saveLocal = async ({ svg, fileName }) => {
+  await fs.promises.writeFile(`./out/${fileName}.svg`, svg)
 }
 
 const saveToGCS = ({svg, fileName}) => {
@@ -76,10 +77,10 @@ const saveToGyazo = () => {}
 export const core = async ({url, win, range}) => {
   const tokenValid = await checkToken()
   const callback = () => {
-    capture({url, win, range})
+    return capture({url, win, range})
   }
   if (!tokenValid) {
     return oauth(callback)
   }
-  callback()
+  return callback()
 }
