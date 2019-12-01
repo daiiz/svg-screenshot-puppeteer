@@ -1,5 +1,6 @@
 import fs from 'fs'
 import openurl from 'openurl'
+import { Storage } from '@google-cloud/storage'
 
 const keyFilename = "./keys/private-key.json"
 const projectId = "gyakky2"
@@ -17,15 +18,14 @@ const existFile = filePath => {
 
 const initGCS = () => {
   if (!existFile(keyFilename)) return
-  gcs = require('@google-cloud/storage')({
-    projectId,
-    keyFilename
-  })
+  gcs = new Storage({ projectId, keyFilename })
 }
 
 export async function uploadToGoogleCloudStorage ({fileName, text}) {
   const dirName = 'puppeteer_svg_screenshot'
   const localFilePath = `./out/${fileName}.svg`
+  await fs.promises.writeFile(localFilePath, text, { encoding: 'utf-8' })
+
   initGCS()
   if (!gcs) {
     console.log(localFilePath)
@@ -39,7 +39,10 @@ export async function uploadToGoogleCloudStorage ({fileName, text}) {
       contentType: 'image/svg+xml'
     }
   }, async (err, file) => {
-    if (err) return
+    if (err) {
+      console.log(err)
+      return
+    }
     await file.makePublic()
     fs.unlinkSync(localFilePath)
     const url = `http://storage.googleapis.com/${bucketName}/${dirName}/${fileName}.svg`
